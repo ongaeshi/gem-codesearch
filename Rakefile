@@ -37,7 +37,14 @@ end
 task :mirror => ".gem/.mirrorrc" do
   FileUtils.mkpath MIRROR_DIR
   # HOME is set because gem mirror reads $HOME/.gem/.mirrorrc.
-  sh "HOME=#{Dir.pwd} #{GEM_COMMAND} mirror --verbose"
+  # sh "HOME=#{Dir.pwd} #{GEM_COMMAND} mirror --verbose"
+
+  current_dir = Dir.pwd
+  $:.unshift File.join(current_dir, '../rubygems-mirror/lib')
+  require 'rubygems/mirror/command'
+
+  mirror = Gem::Commands::MirrorCommand.new
+  mirror.execute(current_dir)
 end
 
 task :unpack do
